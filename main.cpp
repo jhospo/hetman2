@@ -27,13 +27,15 @@ bool possible(const vector<pair<int,int>> &state) {
 
 vector<vector<pair<int,int>>> createChildren(const vector<pair<int,int>> &S) {
     vector<vector<pair<int,int>>> child;
+    //chyba najlepsze co moze byc czyli generuje dzieci tylko jedna kolumne glebokosci czyli mniej dzieci
+    //przepraszam, ale to konieczne bo mi plonie ram jak chce to zasymulowac
+    int currentCol = S.size();
     for (int row = 0; row < n; row++) {
-        for (int col = 0; col < n; col++) {
-            vector<pair<int,int>> newState = S;
-            newState.push_back({row, col});
-            child.push_back(newState);
-        }
+        vector<pair<int,int>> newState = S;
+        newState.push_back({row, currentCol});
+        child.push_back(newState);
     }
+
     return child;
 }
 
@@ -160,10 +162,12 @@ bool bestFirstSearchHeuristic(
             for (int col = 0; col < n; col++) {
                 vector<pair<int, int>> newState = current;
                 newState.push_back(make_pair(row, col));
-                open.push_back(newState);
-                //cout<<row<<endl;
+                if (possible(newState)) {
+                    open.push_back(newState);
+                }
             }
         }
+
 
         closed.push_back(current);
     }
@@ -172,7 +176,7 @@ bool bestFirstSearchHeuristic(
 }
 
 int main() {
-    int n_start = 4, n_end = 9;
+    int n_start = 4, n_end = 8;
     vector<int> CLOSED_BFS(100), CLOSED_DFS(100), CLOSED_H1(100), CLOSED_H2(100), CLOSED_Hdod(100);
     vector<int> OPEN_BFS(100), OPEN_DFS(100), OPEN_H1(100), OPEN_H2(100), OPEN_Hdod(100);
     vector<double> TIME_BFS(100), TIME_DFS(100), TIME_H1(100), TIME_H2(100), TIME_Hdod(100);
@@ -270,7 +274,7 @@ int main() {
             cout << "Nie znaleziono rozwiazania.\n";
         }
         cout << "\n";
-
+        if(currentN <= 5){
         Solutions.clear();
         auto t9 = chrono::high_resolution_clock::now();
         bool found_hdod = bestFirstSearchHeuristic(Start, Solutions, hdod);
@@ -290,7 +294,7 @@ int main() {
             cout << "\n";
         } else {
             cout << "Nie znaleziono rozwiazania.\n";
-        }
+        }}
         cout << "\n";}
 
 
@@ -312,38 +316,43 @@ int main() {
 
     ofstream gp("skrypt.gnuplot");
     gp << "set datafile separator whitespace\n";
-    gp << "set key left top\n";
+    gp << "set key outside\n";
     gp << "set grid\n";
-    gp << "set term png size 1000,700\n";
+    gp << "set term png size 1200,800\n";
 
     gp << "set output 'czas.png'\n";
     gp << "set title 'Czas wykonania'\n";
-    gp << "set xlabel 'n'\nset ylabel 'czas [ms]'\n";
-    gp << "plot 'wyniki.dat' using 1:12 title 'BFS' with linespoints, \\\n";
-    gp << "     'wyniki.dat' using 1:13 title 'DFS' with linespoints, \\\n";
-    gp << "     'wyniki.dat' using 1:14 title 'H1' with linespoints, \\\n";
-    gp << "     'wyniki.dat' using 1:15 title 'H2' with linespoints, \\\n";
-    gp << "     'wyniki.dat' using 1:16 title 'Hdod' with linespoints\n";
+    gp << "set xlabel 'n'\n";
+    gp << "set ylabel 'czas [ms]'\n";
+    gp << "set logscale y\n";
+    gp << "plot 'wyniki.dat' using 1:12 title 'BFS' with linespoints lw 2 pt 7, \\\n";
+    gp << "     'wyniki.dat' using 1:13 title 'DFS' with linespoints lw 2 pt 7, \\\n";
+    gp << "     'wyniki.dat' using 1:14 title 'H1' with linespoints lw 2 pt 7, \\\n";
+    gp << "     'wyniki.dat' using 1:15 title 'H2' with linespoints lw 2 pt 7, \\\n";
+    gp << "     'wyniki.dat' using 1:16 title 'Hdod' with linespoints lw 2 pt 7\n";
 
     gp << "set output 'open.png'\n";
     gp << "set title 'Rozmiar OPEN'\n";
-    gp << "set xlabel 'n'\nset ylabel 'rozmiar OPEN'\n";
-    gp << "plot 'wyniki.dat' using 1:2 title 'BFS', \\\n";
-    gp << "     'wyniki.dat' using 1:4 title 'DFS', \\\n";
-    gp << "     'wyniki.dat' using 1:6 title 'H1', \\\n";
-    gp << "     'wyniki.dat' using 1:8 title 'H2', \\\n";
-    gp << "     'wyniki.dat' using 1:10 title 'Hdod'\n";
+    gp << "set xlabel 'n'\n";
+    gp << "set ylabel 'rozmiar OPEN'\n";
+    gp << "plot 'wyniki.dat' using 1:2 title 'BFS' with linespoints lw 2 pt 7, \\\n";
+    gp << "     'wyniki.dat' using 1:4 title 'DFS' with linespoints lw 2 pt 7, \\\n";
+    gp << "     'wyniki.dat' using 1:6 title 'H1' with linespoints lw 2 pt 7, \\\n";
+    gp << "     'wyniki.dat' using 1:8 title 'H2' with linespoints lw 2 pt 7, \\\n";
+    gp << "     'wyniki.dat' using 1:10 title 'Hdod' with linespoints lw 2 pt 7\n";
 
     gp << "set output 'closed.png'\n";
     gp << "set title 'Rozmiar CLOSED'\n";
-    gp << "set xlabel 'n'\nset ylabel 'rozmiar CLOSED'\n";
-    gp << "plot 'wyniki.dat' using 1:3 title 'BFS', \\\n";
-    gp << "     'wyniki.dat' using 1:5 title 'DFS', \\\n";
-    gp << "     'wyniki.dat' using 1:7 title 'H1', \\\n";
-    gp << "     'wyniki.dat' using 1:9 title 'H2', \\\n";
-    gp << "     'wyniki.dat' using 1:11 title 'Hdod'\n";
+    gp << "set xlabel 'n'\n";
+    gp << "set ylabel 'rozmiar CLOSED'\n";
+    gp << "plot 'wyniki.dat' using 1:3 title 'BFS' with linespoints lw 2 pt 7, \\\n";
+    gp << "     'wyniki.dat' using 1:5 title 'DFS' with linespoints lw 2 pt 7, \\\n";
+    gp << "     'wyniki.dat' using 1:7 title 'H1' with linespoints lw 2 pt 7, \\\n";
+    gp << "     'wyniki.dat' using 1:9 title 'H2' with linespoints lw 2 pt 7, \\\n";
+    gp << "     'wyniki.dat' using 1:11 title 'Hdod' with linespoints lw 2 pt 7\n";
 
     gp.close();
+
 
     return 0;
 }

@@ -5,7 +5,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <algorithm>
-
+//JAN HOSPODARYSKO
 using namespace std;
 
 int n = 4;

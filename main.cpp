@@ -296,7 +296,10 @@ int main() {
             cout << "Nie znaleziono rozwiazania.\n";
         }}
         cout << "\n";}
-
+        //DFS jest bezkonkurenycjny, ponieważ wykonywany jest najszybciej, ponieważ drzewo jest najmniej rozpięte
+        //metody heurystyczne mimo ze starają się byc "mądre" to przez to zajmuje znacznie dlzużej czasu znalezienie 
+        //poprawnego rozwiązania, przydałoby się kilka optymalizacji jak np sprawdzanie tylko poprawnych stanów, ale
+        //to juz nie spelnia warunków zadania
 
         ofstream out("wyniki.dat");
     out << "# n BFS_open BFS_closed DFS_open DFS_closed H1_open H1_closed H2_open H2_closed Hdod_open Hdod_closed ";
